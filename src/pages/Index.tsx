@@ -48,7 +48,7 @@ const Index = () => {
           <div className="mx-auto min-h-screen max-w-2xl px-4 pt-24 pb-12">
             <h2 className="mb-6 animate-fade-up font-serif text-2xl font-semibold text-foreground">专注记录</h2>
             <div className="animate-fade-up-delay-1">
-              <FocusCalendar sessions={sessions} />
+              <FocusCalendar sessions={sessions} onViewDiary={(date) => { setDiaryDate(date); setActiveTab('diary'); }} />
             </div>
             {/* Stats */}
             <div className="mt-6 grid grid-cols-3 gap-4 animate-fade-up-delay-2">
