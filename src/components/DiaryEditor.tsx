@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BookOpen, Save, Plus, Trash2 } from 'lucide-react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
@@ -9,12 +9,35 @@ export interface DiaryEntry {
   createdAt: string;
 }
 
-const DiaryEditor = () => {
+interface DiaryEditorProps {
+  initialDate?: string | null;
+  onDateConsumed?: () => void;
+}
+
+const DiaryEditor = ({ initialDate, onDateConsumed }: DiaryEditorProps) => {
   const [entries, setEntries] = useLocalStorage<DiaryEntry[]>('diary-entries', []);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [content, setContent] = useState('');
 
   const activeEntry = entries.find((e) => e.id === activeId);
+
+  // When navigating from calendar with a specific date
+  useEffect(() => {
+    if (!initialDate) return;
+    const existing = entries.find((e) => e.date === initialDate);
+    if (existing) {
+      setActiveId(existing.id);
+      setContent(existing.content);
+    } else {
+      // Create a new entry for that date
+      const id = Date.now().toString();
+      const entry: DiaryEntry = { id, date: initialDate, content: '', createdAt: new Date().toISOString() };
+      setEntries([entry, ...entries]);
+      setActiveId(id);
+      setContent('');
+    }
+    onDateConsumed?.();
+  }, [initialDate]);
 
   const createEntry = () => {
     const today = new Date().toISOString().split('T')[0];

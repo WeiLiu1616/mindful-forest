@@ -16,6 +16,7 @@ interface FocusSession {
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [sessions, setSessions] = useLocalStorage<FocusSession[]>('focus-sessions', []);
+  const [diaryDate, setDiaryDate] = useState<string | null>(null);
 
   const handleSessionComplete = useCallback((duration: number, date: string) => {
     setSessions((prev) => [...prev, { duration, date }]);
@@ -39,7 +40,7 @@ const Index = () => {
           <div className="mx-auto min-h-screen max-w-4xl px-4 pt-24 pb-12">
             <h2 className="mb-6 animate-fade-up font-serif text-2xl font-semibold text-foreground">我的日记</h2>
             <div className="animate-fade-up-delay-1">
-              <DiaryEditor />
+              <DiaryEditor initialDate={diaryDate} onDateConsumed={() => setDiaryDate(null)} />
             </div>
           </div>
         );
@@ -48,7 +49,7 @@ const Index = () => {
           <div className="mx-auto min-h-screen max-w-2xl px-4 pt-24 pb-12">
             <h2 className="mb-6 animate-fade-up font-serif text-2xl font-semibold text-foreground">专注记录</h2>
             <div className="animate-fade-up-delay-1">
-              <FocusCalendar sessions={sessions} />
+              <FocusCalendar sessions={sessions} onViewDiary={(date) => { setDiaryDate(date); setActiveTab('diary'); }} />
             </div>
             {/* Stats */}
             <div className="mt-6 grid grid-cols-3 gap-4 animate-fade-up-delay-2">
@@ -75,7 +76,8 @@ const Index = () => {
       {/* Faded background for inner pages */}
       {activeTab !== 'home' && (
         <div className="fixed inset-0 z-0">
-          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-[0.06]" />
+          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-[0.12]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background" />
         </div>
       )}
       <div className="relative z-10">
