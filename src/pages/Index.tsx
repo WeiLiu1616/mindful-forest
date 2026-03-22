@@ -4,7 +4,9 @@ import HeroSection from '@/components/HeroSection';
 import FocusTimer from '@/components/FocusTimer';
 import DiaryEditor from '@/components/DiaryEditor';
 import FocusCalendar from '@/components/FocusCalendar';
+import AmbientSound from '@/components/AmbientSound';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import heroImage from '@/assets/hero-nature.jpg';
 
 interface FocusSession {
   duration: number;
