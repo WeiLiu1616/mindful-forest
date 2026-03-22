@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 
 interface FocusSession {
@@ -9,9 +9,10 @@ interface FocusSession {
 
 interface FocusCalendarProps {
   sessions: FocusSession[];
+  onViewDiary?: (date: string) => void;
 }
 
-const FocusCalendar = ({ sessions }: FocusCalendarProps) => {
+const FocusCalendar = ({ sessions, onViewDiary }: FocusCalendarProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
@@ -24,6 +25,15 @@ const FocusCalendar = ({ sessions }: FocusCalendarProps) => {
     const map: Record<string, number> = {};
     sessions.forEach((s) => {
       map[s.date] = (map[s.date] || 0) + s.duration;
+    });
+    return map;
+  }, [sessions]);
+
+  // Count sessions per date
+  const sessionCountMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    sessions.forEach((s) => {
+      map[s.date] = (map[s.date] || 0) + 1;
     });
     return map;
   }, [sessions]);
@@ -106,6 +116,7 @@ const FocusCalendar = ({ sessions }: FocusCalendarProps) => {
           const day = i + 1;
           const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
           const duration = sessionMap[dateStr] || 0;
+          const count = sessionCountMap[dateStr] || 0;
           const intensity = getIntensity(duration);
           const isToday = dateStr === today;
 
@@ -122,14 +133,46 @@ const FocusCalendar = ({ sessions }: FocusCalendarProps) => {
               {duration > 0 && (
                 <>
                   <span className="text-[10px] text-nature-green font-medium">{formatDuration(duration)}</span>
-                  <div className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-nature-dark px-2 py-1 text-xs text-nature-dark-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                    专注 {formatDuration(duration)}
+                  {/* Session count dots */}
+                  <div className="flex gap-0.5 mt-0.5">
+                    {Array.from({ length: Math.min(count, 4) }).map((_, idx) => (
+                      <div key={idx} className="h-1 w-1 rounded-full bg-nature-green" />
+                    ))}
+                  </div>
+                  {/* Tooltip */}
+                  <div className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-nature-dark px-2.5 py-1.5 text-xs text-nature-dark-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                    专注 {count}次 · {formatDuration(duration)}
                   </div>
                 </>
+              )}
+              {/* Diary link button */}
+              {onViewDiary && (
+                <button
+                  onClick={() => onViewDiary(dateStr)}
+                  className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded text-muted-foreground/0 transition-all group-hover:text-nature-gold hover:!text-nature-green"
+                  title={`查看 ${dateStr} 的日记`}
+                >
+                  <BookOpen size={10} />
+                </button>
               )}
             </div>
           );
         })}
+      </div>
+
+      {/* Legend */}
+      <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <span>少</span>
+          {[1, 2, 3, 4].map((level) => (
+            <div key={level} className={`h-3 w-3 rounded ${intensityColors[level]}`} />
+          ))}
+          <span>多</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <BookOpen size={12} />
+          <span>悬停日期可跳转日记</span>
+        </div>
       </div>
     </div>
   );
