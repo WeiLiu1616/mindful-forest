@@ -71,9 +71,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
-      {renderContent()}
+    <div className="relative min-h-screen bg-background">
+      {/* Faded background for inner pages */}
+      {activeTab !== 'home' && (
+        <div className="fixed inset-0 z-0">
+          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-[0.06]" />
+        </div>
+      )}
+      <div className="relative z-10">
+        <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
+        {renderContent()}
+      </div>
+      <AmbientSound />
     </div>
   );
 };
