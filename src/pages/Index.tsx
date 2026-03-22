@@ -40,7 +40,7 @@ const Index = () => {
           <div className="mx-auto min-h-screen max-w-4xl px-4 pt-24 pb-12">
             <h2 className="mb-6 animate-fade-up font-serif text-2xl font-semibold text-foreground">我的日记</h2>
             <div className="animate-fade-up-delay-1">
-              <DiaryEditor />
+              <DiaryEditor initialDate={diaryDate} onDateConsumed={() => setDiaryDate(null)} />
             </div>
           </div>
         );
