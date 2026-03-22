@@ -16,6 +16,7 @@ interface FocusSession {
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [sessions, setSessions] = useLocalStorage<FocusSession[]>('focus-sessions', []);
+  const [diaryDate, setDiaryDate] = useState<string | null>(null);
 
   const handleSessionComplete = useCallback((duration: number, date: string) => {
     setSessions((prev) => [...prev, { duration, date }]);
