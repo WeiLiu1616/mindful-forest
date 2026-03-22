@@ -75,7 +75,8 @@ const Index = () => {
       {/* Faded background for inner pages */}
       {activeTab !== 'home' && (
         <div className="fixed inset-0 z-0">
-          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-[0.06]" />
+          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-[0.12]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background" />
         </div>
       )}
       <div className="relative z-10">
